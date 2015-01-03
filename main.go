@@ -31,18 +31,22 @@ type Country struct {
 }
 
 type City struct {
-	Country   string  `json:"country"`
-	Name      string  `json:"city"`
-	Latitude  float32 `json:"latitude"`
-	Longitude float32 `json:"longitude"`
-	Count     int     `json:"count"`
-	Ip        string  `json:"ip"`
+	Country   	string  `json:"country"`
+	Name      	string  `json:"city"`
+	Latitude  	float32 `json:"latitude"`
+	Longitude 	float32 `json:"longitude"`
+	Count     	int     `json:"count"`
+	Ip        	string  `json:"ip"`
+	PageRequest 	string	`json:"pagerequest"`
 }
 
 var gijson *GIJSON = &GIJSON{Countries: make(map[string]*Country), Cities: []*City{}}
 
 func readStdin() {
 	ipRe := regexp.MustCompile("((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)")
+	pageRe := regexp.MustCompile(`\"(.*)\" ([0-9]+)`)
+    	//match := re.FindStringSubmatch(`"GET /tory-burch-womens-rivington-pumps-for-197-8-sh/ HTTP/1.1" 200 8306 "-" "Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp)"`)
+    	//fmt.Printf("4. %s\n", match[1])
 	scanner := bufio.NewScanner(os.Stdin)
 
 	DBBox := rice.MustFindBox("db")
@@ -58,19 +62,20 @@ func readStdin() {
 	for scanner.Scan() {
 		if ip := ipRe.FindString(scanner.Text()); ip != "" {
 			if location := geoip.GetLocationByIP(ip); location != nil {
-				processLocation(location,ip)
+				pageRequest := pageRe.FindStringSubmatch(scanner.Text())
+				processLocation(location,ip,pageRequest[1])
 			}
 		}
 	}
 }
 
-func processLocation(location *libgeo.Location, ip string) {
+func processLocation(location *libgeo.Location, ip string, pageRequest string) {
 	var found bool = false
 
 	gijson.Countries[location.CountryName] = &Country{Name: location.CountryName}
 
 	for _, c := range gijson.Cities {
-		if c.Country == location.CountryName && c.Name == location.City {
+		if c.Country == location.CountryName && c.Name == location.City && c.PageRequest == pageRequest {
 			c.Count++
 			found = true
 			break
@@ -78,12 +83,13 @@ func processLocation(location *libgeo.Location, ip string) {
 	}
 	if !found {
 		city := &City{
-			Country:   location.CountryName,
-			Name:      location.City,
-			Latitude:  location.Latitude,
-			Longitude: location.Longitude,
-			Ip:	   ip,
-			Count:     1,
+			Country:   	location.CountryName,
+			Name:      	location.City,
+			Latitude:  	location.Latitude,
+			Longitude: 	location.Longitude,
+			Ip:	   	ip,
+			PageRequest:	pageRequest,
+			Count:     	1,
 		}
 		gijson.Cities = append(gijson.Cities, city)
 	}

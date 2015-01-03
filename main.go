@@ -71,7 +71,7 @@ func readStdin() {
 	}
 }
 
-func isBot(logEntry string) {
+func isBot(logEntry string) bool {
 
         // taken from http://www.asitis.com/16/
 

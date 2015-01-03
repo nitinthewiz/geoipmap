@@ -77,7 +77,7 @@ func processLocation(location *libgeo.Location, ip string, pageRequest string) {
 	for _, c := range gijson.Cities {
 		if c.Country == location.CountryName && c.Name == location.City {
 			if c.PageRequest != pageRequest {
-				c.PageRequest = c.PageRequest + "; \n" + pageRequest
+				c.PageRequest = c.PageRequest + "; <br />" + pageRequest
 			}
 			c.Count++
 			found = true

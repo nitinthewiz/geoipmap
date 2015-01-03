@@ -114,8 +114,8 @@
 				.offset([-10, 0])
 				.html(function(d) {
 					return "<strong>" + d.city + ", " + d.country + "</strong><br />" +
-						"<span>count: " + d.count + "</span>"+
-						"<span>d: " + d + "</span>";
+						"<span>count: " + d.count + "</span><br />"+
+						"<span>d: " + reflect.TypeOf(d) + "</span>";
 				})
 			svg.call(tip);
 

@@ -65,7 +65,7 @@ func readStdin() {
 	}
 }
 
-func processLocation(location *libgeo.Location, string *ip) {
+func processLocation(location *libgeo.Location, ip *string) {
 	var found bool = false
 
 	gijson.Countries[location.CountryName] = &Country{Name: location.CountryName}

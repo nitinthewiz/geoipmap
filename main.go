@@ -85,7 +85,7 @@ func isBot(logEntry string) bool {
         }
 
         for each := range botHandles {
-        	if strings.Contains(logEntry, each) {
+        	if strings.Contains(logEntry, botHandles[each]) {
         		return true
         	}
                 //fmt.Printf("Divine value [%d] is [%s]\n", index, each)

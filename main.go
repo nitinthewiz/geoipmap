@@ -13,7 +13,6 @@ import (
 	"regexp"
 	"strconv"
 	"text/template"
-	"reflect"
 
 	"github.com/GeertJohan/go.rice"
 	"github.com/skratchdot/open-golang/open"

@@ -84,7 +84,7 @@ func isBot(logEntry string) bool {
                 "linkfluence","netseer","package http","httplib2",
         }
 
-        for index, each := range botHandles {
+        for each := range botHandles {
         	if strings.Contains(logEntry, each) {
         		return true
         	}

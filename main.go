@@ -60,13 +60,36 @@ func readStdin() {
 	}
 
 	for scanner.Scan() {
-		if ip := ipRe.FindString(scanner.Text()); ip != "" {
+		if ip := ipRe.FindString(scanner.Text()); ip != "" && ip != "107.170.247.63" {
+			if isBot(scanner.Text()) { break }
 			if location := geoip.GetLocationByIP(ip); location != nil {
 				pageRequest := pageRe.FindStringSubmatch(scanner.Text())
 				processLocation(location,ip,pageRequest[1])
 			}
 		}
 	}
+}
+
+func isBot(logEntry string) {
+
+        // taken from http://www.asitis.com/16/
+
+        botHandles := []string{
+                "bot","crawler","spider","bingbot","Googlebot","ysearch","msnbot","Google-HTTP","metauri","Photon",
+                "jetmon","FlipboardProxy","gzip","Twitterbot","TweetmemeBot","browserproxy","WordPress/4.1","http_request2",
+                "crowsnest","alexa","firefly","froogle","ahrefsbot","pingdom","kraken","openhose","linkdex","grokkit",
+                "cloudflare-alwaysonline","grouphigh","mj12bot","port-monitor","rqst","facebookexternalhit",
+                "moreover","biggerbetter","inagist","incutio","blo.gs","feedbin","newspaper","typhoeus","recorded future",
+                "linkfluence","netseer","package http","httplib2",
+        }
+
+        for index, each := range botHandles {
+        	if strings.Contains(logEntry, each) {
+        		return true
+        	}
+                //fmt.Printf("Divine value [%d] is [%s]\n", index, each)
+        }
+        return false
 }
 
 func processLocation(location *libgeo.Location, ip string, pageRequest string) {

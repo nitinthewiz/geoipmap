@@ -37,6 +37,7 @@ type City struct {
 	Latitude  float32 `json:"latitude"`
 	Longitude float32 `json:"longitude"`
 	Count     int     `json:"count"`
+	Ip        string  `json:"ip"`
 }
 
 var gijson *GIJSON = &GIJSON{Countries: make(map[string]*Country), Cities: []*City{}}
@@ -58,13 +59,13 @@ func readStdin() {
 	for scanner.Scan() {
 		if ip := ipRe.FindString(scanner.Text()); ip != "" {
 			if location := geoip.GetLocationByIP(ip); location != nil {
-				processLocation(location)
+				processLocation(location,ip)
 			}
 		}
 	}
 }
 
-func processLocation(location *libgeo.Location) {
+func processLocation(location *libgeo.Location, string *ip) {
 	var found bool = false
 
 	gijson.Countries[location.CountryName] = &Country{Name: location.CountryName}
@@ -82,6 +83,7 @@ func processLocation(location *libgeo.Location) {
 			Name:      location.City,
 			Latitude:  location.Latitude,
 			Longitude: location.Longitude,
+			Ip:	   ip,
 			Count:     1,
 		}
 		gijson.Cities = append(gijson.Cities, city)
